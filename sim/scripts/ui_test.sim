@@ -1,0 +1,196 @@
+# Functional UI test: drives touches like a user and checks application state.
+# Coordinates are landscape pixels (640x180). Screenshots land in --out.
+
+# --- Touch glitches (a single 20 ms sample) never move the desk ----------------
+tap 504 47 20
+wait 1000
+expect moving 0
+expect height 74.0 0.05
+tap 272 47 20
+wait 800
+expect target -1
+
+# --- Hold up / down ------------------------------------------------------------
+press 504 47
+wait 2000
+expect moving 1
+expect height_above 78
+shot t01-holding-up
+release
+wait 1500
+expect moving 0
+press 504 133
+wait 1000
+release
+wait 1500
+expect moving 0
+
+# --- Sliding off the button stops the desk (PRESS_LOST) ---------------------------
+press 504 47
+wait 800
+move 330 90
+wait 1500
+expect moving 0
+release
+wait 300
+
+# --- Go to preset, then stop it -------------------------------------------------------
+tap 272 47                      # preset 1 (Sit) - stored in the simulated box
+wait 500
+expect target 0
+shot t02-to-preset
+tap 504 90                      # Stop (replaces up/down while travelling)
+wait 1500
+expect target -1
+expect moving 0
+
+tap 272 47                      # go all the way this time
+wait 6000
+expect height 72.5 0.1
+expect at_preset 0
+
+# --- Hold preset 3 to save the current height --------------------------------------------
+press 600 90                    # (warm-up: lights button, tap ignored below)
+release
+page home
+press 272 133
+wait 1900
+release
+wait 150
+shot t03-preset-saved-toast
+wait 2500
+expect preset_at_height 2
+expect at_preset 0              # preset 1 wins ties (same height)
+
+# --- A preset tap right after saving is refused (the box is still armed by M) ----------------
+press 384 133                   # hold preset 4 to save here
+wait 1900
+release
+wait 300
+tap 384 47                      # preset 2 straight away: would overwrite preset 2
+wait 300
+expect target -1
+shot t03b-busy-toast
+wait 6000
+expect preset_at_height 3
+expect moving 0
+
+# --- Child lock -----------------------------------------------------------------------------
+tap 384 47                      # start travelling to preset 2...
+wait 1500
+expect moving 1
+tap 602 32                      # ...locking stops the desk
+wait 1500
+expect moving 0
+expect target -1
+expect locked 1
+press 602 32
+wait 1700
+release
+wait 300
+expect locked 0
+
+tap 602 32
+wait 300
+expect locked 1
+shot t04-locked
+press 504 47
+wait 800
+release
+wait 200
+expect moving 0
+shot t05-locked-toast
+tap 272 133
+wait 800
+expect target -1
+tap 602 32                      # short tap does not unlock
+wait 300
+expect locked 1
+press 602 32                    # hold to unlock
+wait 1700
+release
+wait 300
+expect locked 0
+
+# --- Theme change from settings -------------------------------------------------------------
+tap 602 147
+wait 500
+tap 293 90                      # Graphite swatch
+wait 300
+expect theme 1
+shot t06-settings-graphite
+tap 199 90                      # back to Midnight
+wait 300
+expect theme 0
+
+# --- Units -> inches ------------------------------------------------------------------------
+tap 236 28                      # Desk tab
+wait 200
+tap 542 82                      # Inches
+wait 300
+expect setting units 1
+tap 35 28                       # back
+wait 500
+shot t07-home-inches
+tap 602 147
+wait 400
+tap 236 28
+tap 394 82                      # Centimetres
+wait 300
+expect setting units 0
+tap 35 28
+wait 400
+
+# --- Lights ----------------------------------------------------------------------------------
+tap 602 90
+wait 400
+tap 405 28                      # Rainbow effect
+wait 300
+expect setting lights_on 1
+expect setting lights_effect 2
+shot t08-lights-rainbow
+tap 35 28
+wait 400
+
+# --- Dim, sleep and wake-on-touch ------------------------------------------------------------
+set brightness 80
+set dim 15
+set sleep 120
+wait 16000
+expect backlight 20
+tap 504 47 300                  # a touch while dimmed only wakes the screen...
+wait 200
+expect backlight 80
+expect moving 0
+wait 121000
+expect backlight 0
+tap 504 47 300                  # ...and so does one while asleep
+wait 600
+expect backlight 80
+expect moving 0
+set dim 60
+set sleep 600
+
+# --- Sit/stand reminder ------------------------------------------------------------------------
+set reminder 30
+wait 1802000
+expect reminder_due 1
+shot t09-reminder
+tap 500 121                     # "Stand up" (primary)
+wait 500
+expect reminder_due 0
+set reminder 0
+
+# --- Control box error and offline states ---------------------------------------------------------
+desk_text E01 2500
+wait 300
+shot t10-desk-error
+tap 520 121                     # OK
+wait 3000
+unplug
+wait 3000
+expect link 0
+shot t11-offline
+plug
+wait 1500
+expect link 2

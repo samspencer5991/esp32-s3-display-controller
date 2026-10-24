@@ -1,0 +1,17 @@
+# Home screen in every theme.
+tap 272 47
+wait 5000
+theme 0
+shot theme-0
+theme 1
+shot theme-1
+theme 2
+shot theme-2
+theme 3
+shot theme-3
+theme 4
+shot theme-4
+theme 5
+shot theme-5
+theme 6
+shot theme-6

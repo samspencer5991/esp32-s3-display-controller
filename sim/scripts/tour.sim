@@ -1,0 +1,24 @@
+# Visual tour of every screen (screenshots only).
+shot home
+tap 272 47          # preset 1 (Sit, 72.5)
+wait 400
+shot home-moving
+wait 3000
+shot home-at-preset
+page settings
+shot settings-display
+tap 236 28          # Desk tab
+wait 200
+shot settings-desk
+tap 350 28          # Presets tab
+wait 200
+shot settings-presets
+tap 464 28          # Network tab
+wait 200
+shot settings-network
+tap 578 28          # About tab
+wait 200
+shot settings-about
+page lights
+shot lights
+page home

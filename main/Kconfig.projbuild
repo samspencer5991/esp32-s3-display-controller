@@ -1,0 +1,78 @@
+menu "Smart Desk Controller"
+
+    menu "Desk connection (RJ45)"
+        config DESK_UART_TX_GPIO
+            int "UART TX GPIO (to RJ45 pin 6, control box RX)"
+            default 6
+        config DESK_UART_RX_GPIO
+            int "UART RX GPIO (from RJ45 pin 5, control box TX - level shift 5V!)"
+            default 7
+        config DESK_WAKE_GPIO
+            int "Wake GPIO (to RJ45 pin 4, 'PIN 20')"
+            default 5
+        config DESK_WAKE_ACTIVE_LOW
+            bool "Wake output is inverted (e.g. driven through an NPN transistor)"
+            default n
+        config DESK_REPORTS_INCHES
+            bool "Control box is configured to display inches"
+            default n
+        config DESK_DEMO_MODE_DEFAULT
+            bool "Start in demo mode (simulated desk) on first boot"
+            default y
+            help
+                Demo mode drives a simulated control box so the UI can be used
+                without a desk connected. Toggle it in Settings > Desk.
+    endmenu
+
+    menu "LED strip"
+        config LED_STRIP_ENABLED
+            bool "Drive an addressable LED strip"
+            default y
+        config LED_STRIP_GPIO
+            int "LED data GPIO"
+            default 48
+            depends on LED_STRIP_ENABLED
+        config LED_STRIP_COUNT
+            int "Number of LEDs"
+            default 60
+            range 1 1000
+            depends on LED_STRIP_ENABLED
+        choice LED_STRIP_MODEL
+            prompt "LED model"
+            default LED_STRIP_MODEL_WS2812
+            depends on LED_STRIP_ENABLED
+            config LED_STRIP_MODEL_WS2812
+                bool "WS2812 / WS2812B (GRB)"
+            config LED_STRIP_MODEL_SK6812
+                bool "SK6812 (GRB)"
+        endchoice
+        config LED_STRIP_MAX_BRIGHTNESS
+            int "Hardware brightness cap (%) - limits current draw"
+            default 60
+            range 5 100
+            depends on LED_STRIP_ENABLED
+    endmenu
+
+    menu "Network defaults"
+        comment "Used until credentials are set with the console (wifi / mqtt commands)"
+        config DESK_WIFI_SSID
+            string "Wi-Fi SSID"
+            default ""
+        config DESK_WIFI_PASSWORD
+            string "Wi-Fi password"
+            default ""
+        config DESK_MQTT_URI
+            string "MQTT broker URI (e.g. mqtt://homeassistant.local)"
+            default ""
+        config DESK_MQTT_USERNAME
+            string "MQTT username"
+            default ""
+        config DESK_MQTT_PASSWORD
+            string "MQTT password"
+            default ""
+        config DESK_DEVICE_NAME
+            string "Device name shown in Home Assistant"
+            default "Standing Desk"
+    endmenu
+
+endmenu

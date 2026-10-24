@@ -1,0 +1,35 @@
+# Less common states, for visual review.
+net 2 2                          # Wi-Fi connected, MQTT connected
+wait 200
+shot s01-home-online
+page settings
+tap 464 28                       # Network tab
+wait 200
+shot s02-network-connected
+tap 578 28                       # About
+wait 200
+shot s03-about
+tap 236 28                       # Desk tab, scroll to the bottom
+wait 200
+drag 320 170 320 60 300
+wait 600
+shot s04-desk-scrolled
+drag 320 170 320 40 300
+wait 600
+shot s05-desk-bottom
+tap 350 28                       # Presets tab
+wait 200
+tap 70 82                        # cycle preset 1 icon
+wait 300
+tap 190 82                       # cycle preset 1 name
+wait 300
+shot s06-presets-edited
+page home
+desk_text LoC 3000
+wait 400
+shot s07-box-locked-modal
+tap 520 125
+wait 400
+desk_text rSt 3000
+wait 400
+shot s08-reset-modal

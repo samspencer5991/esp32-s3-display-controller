@@ -1,0 +1,41 @@
+# Screenshots used by README.md (run via tools/make_readme_images.sh).
+tap 384 47                      # preset 2 -> 112 cm
+wait 12500
+tap 272 47                      # preset 1 -> 72.5 cm
+wait 1200
+shot home-moving
+wait 11000
+shot home
+set reminder 45
+tap 602 32
+wait 2600
+shot home-locked
+press 602 32
+wait 1700
+release
+wait 2500
+set units 1
+wait 200
+shot home-inches
+set units 0
+tap 602 147
+wait 300
+shot settings-display
+tap 236 28
+wait 200
+shot settings-desk
+tap 350 28
+wait 200
+shot settings-presets
+tap 35 28
+wait 300
+tap 602 90
+wait 300
+tap 46 140
+wait 300
+shot lights
+tap 35 28
+wait 300
+set reminder 30
+wait 1802000
+shot reminder
